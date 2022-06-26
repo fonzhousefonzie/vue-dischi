@@ -32,6 +32,9 @@
           </div>
         </div>
       </div>
+      <div class="loader" :class="loading">
+        <img src="./assets/disk.svg" alt="">
+      </div>
     </main>
   </div>
 </template>
@@ -52,6 +55,15 @@ export default {
       selected: [],
       genreList: [],
       authorsList: []
+    }
+  },
+  computed:{
+    loading(){
+      if(this.selected !== null){
+        return 'd-none'
+      } else {
+        return 'd-block'
+      }
     }
   },
   methods: {
@@ -125,6 +137,38 @@ main {
     .row .col.card {
       background: inherit;
     }
+  }
+}
+
+.loader{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  background: rgba(0,0,0, 0.5);
+  z-index: 11;
+
+  img{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    aspect-ratio: 1 / 1;
+    animation: rotate 1s linear infinite;
+  }
+}
+
+@keyframes rotate {
+  from{
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  50%{
+    transform: translate(-50%, -50%) rotate(180deg);
+  }
+  to{
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
 </style>
