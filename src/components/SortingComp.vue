@@ -9,7 +9,7 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item" href="#" @click.prevent="resetList()">All</a></li>
-                    <li><a class="dropdown-item" href="#" v-for="genre in genreList" :key="genre"
+                    <li><a class="dropdown-item" href="#" v-for="genre in findGenres" :key="genre"
                             @click.prevent="selectGenre(genre)">{{ genre }}</a></li>
                 </ul>
             </div>
@@ -20,7 +20,7 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                     <li><a class="dropdown-item" href="#" @click.prevent="resetList()">All</a></li>
-                    <li><a class="dropdown-item" href="#" v-for="author in authorsList" :key="author"
+                    <li><a class="dropdown-item" href="#" v-for="author in findAuthors" :key="author"
                             @click.prevent="selectAuthor(author)">{{ author }}</a></li>
                 </ul>
             </div>
@@ -32,25 +32,7 @@
 import { state } from "./store.js"
 
 export default {
-    data(){
-        return{
-            genreList: [],
-            authorsList: [],
-        }
-    },
     methods: {
-        findGenresAndAuthors() {
-            for (let i = 0; i < state.SongsList.length; i++) {
-                if (!this.genreList.includes(state.SongsList[i].genre)) {
-                    this.genreList.push(state.SongsList[i].genre)
-                }
-            }
-            for (let i = 0; i < state.SongsList.length; i++) {
-                if (!this.authorsList.includes(state.SongsList[i].author)) {
-                    this.authorsList.push(state.SongsList[i].author)
-                }
-            }
-        },
         selectGenre(genre) {
             state.selected = [];
             for (let i = 0; i < state.SongsList.length; i++) {
@@ -71,8 +53,25 @@ export default {
             state.selected = state.SongsList;
         }
     },
-    mounted() {
-        this.findGenresAndAuthors()
+    computed: {
+        findGenres() {
+            const genreList = [];
+            for (let i = 0; i < state.SongsList.length; i++) {
+                if (!genreList.includes(state.SongsList[i].genre)) {
+                    genreList.push(state.SongsList[i].genre)
+                }
+            }
+            return genreList;
+        },
+        findAuthors() {
+            const authorsList = [];
+            for (let i = 0; i < state.SongsList.length; i++) {
+                if (!authorsList.includes(state.SongsList[i].author)) {
+                authorsList.push(state.SongsList[i].author)
+                }
+            }
+            return authorsList;
+        }
     }
 }
 </script>

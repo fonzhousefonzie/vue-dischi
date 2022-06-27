@@ -5,12 +5,12 @@
       <div class="container">
         <SortingComp />
         <div class="row row-cols-2 row-cols-sm-5">
-          <div class="col card border-0" v-for="song in selected" :key="song.title">
+          <div class="col card border-0" v-for="song in selectedSongs" :key="song.title">
             <SongCard :imgUrl="song.poster" :songTitle="song.title" :author="song.author" :year="song.year" />
           </div>
         </div>
       </div>
-      <div class="loader" :class="{'d-none' : !loading}">
+      <div class="loader" :class="{ 'd-none': !loading }">
         <img src="./assets/disk.svg" alt="">
       </div>
     </main>
@@ -29,8 +29,6 @@ export default {
   data() {
     return {
       apiUrl: "https://flynn.boolean.careers/exercises/api/array/music",
-      SongsList: state.SongsList,
-      selected: state.selected,
       loading: false
     }
   },
@@ -40,18 +38,23 @@ export default {
       axios.get(this.apiUrl).then((resp) => {
         state.SongsList = resp.data.response;
         state.selected = resp.data.response;
-        this.loading = false
+        this.loading = false;
       })
     }
   },
   mounted() {
     this.fetchSongList();
   },
+  computed: {
+    selectedSongs(){
+      return state.selected
+    }
+  },
   components: {
     TheHeader,
     SongCard,
     SortingComp
-}
+  }
 }
 </script>
 
@@ -80,16 +83,16 @@ main {
   }
 }
 
-.loader{
+.loader {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 100vh;
-  background: rgba(0,0,0, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 11;
 
-  img{
+  img {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -101,13 +104,15 @@ main {
 }
 
 @keyframes rotate {
-  from{
+  from {
     transform: translate(-50%, -50%) rotate(0deg);
   }
-  50%{
+
+  50% {
     transform: translate(-50%, -50%) rotate(180deg);
   }
-  to{
+
+  to {
     transform: translate(-50%, -50%) rotate(360deg);
   }
 }
