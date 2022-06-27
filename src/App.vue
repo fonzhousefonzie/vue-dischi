@@ -3,36 +3,14 @@
     <TheHeader />
     <main>
       <div class="container">
-        <h4 class="text-light">Filters:</h4>
-        <div class="filters d-flex justify-content-center gap-3 pb-3">
-          <div class="dropdown">
-            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton1"
-              data-bs-toggle="dropdown" aria-expanded="false">
-              Genre
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-              <li><a class="dropdown-item" href="#" @click.prevent="resetList()">All</a></li>
-              <li><a class="dropdown-item" href="#" v-for="genre in genreList" :key="genre" @click.prevent="selectGenre(genre)">{{ genre }}</a></li>
-            </ul>
-          </div>
-          <div class="dropdown">
-            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton1"
-              data-bs-toggle="dropdown" aria-expanded="false">
-              Author
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-              <li><a class="dropdown-item" href="#" @click.prevent="resetList()">All</a></li>
-              <li><a class="dropdown-item" href="#" v-for="author in authorsList" :key="author" @click.prevent="selectAuthor(author)">{{ author }}</a></li>
-            </ul>
-          </div>
-        </div>
+        <SortingComp />
         <div class="row row-cols-2 row-cols-sm-5">
           <div class="col card border-0" v-for="song in selected" :key="song.title">
             <SongCard :imgUrl="song.poster" :songTitle="song.title" :author="song.author" :year="song.year" />
           </div>
         </div>
       </div>
-      <div class="loader" :class="loading">
+      <div class="loader" :class="{'d-none' : !loading}">
         <img src="./assets/disk.svg" alt="">
       </div>
     </main>
@@ -42,67 +20,28 @@
 <script>
 import TheHeader from './components/TheHeader.vue';
 import SongCard from './components/SongCard.vue';
-
-
 import axios from "axios";
+import SortingComp from "./components/SortingComp.vue";
+import { state } from "./components/store.js";
 
 export default {
   name: 'App',
   data() {
     return {
       apiUrl: "https://flynn.boolean.careers/exercises/api/array/music",
-      SongsList: [],
-      selected: [],
-      genreList: [],
-      authorsList: []
-    }
-  },
-  computed:{
-    loading(){
-      if(this.selected !== null){
-        return 'd-none'
-      } else {
-        return 'd-block'
-      }
+      SongsList: state.SongsList,
+      selected: state.selected,
+      loading: false
     }
   },
   methods: {
     fetchSongList() {
+      this.loading = true;
       axios.get(this.apiUrl).then((resp) => {
-        // Songs
-        this.SongsList = resp.data.response;
-        this.selected = resp.data.response;
-        // Genres
-        for (let i=0; i < this.SongsList.length; i++){
-          if(!this.genreList.includes(this.SongsList[i].genre)){
-            this.genreList.push(this.SongsList[i].genre)
-          }
-        }
-        for (let i=0; i < this.SongsList.length; i++){
-          if(!this.authorsList.includes(this.SongsList[i].author)){
-            this.authorsList.push(this.SongsList[i].author)
-          }
-        }
+        state.SongsList = resp.data.response;
+        state.selected = resp.data.response;
+        this.loading = false
       })
-    },
-    selectGenre(genre){
-      this.selected = [];
-      for (let i=0; i<this.SongsList.length; i++){
-        if(this.SongsList[i].genre === genre){
-          this.selected.push(this.SongsList[i]);
-        }
-      }
-    },
-    selectAuthor(author){
-      this.selected = [];
-      for (let i=0; i<this.SongsList.length; i++){
-        if(this.SongsList[i].author === author){
-          this.selected.push(this.SongsList[i]);
-        }
-      }
-    },
-    resetList(){
-      this.selected = this.SongsList;
     }
   },
   mounted() {
@@ -110,8 +49,9 @@ export default {
   },
   components: {
     TheHeader,
-    SongCard
-  }
+    SongCard,
+    SortingComp
+}
 }
 </script>
 
